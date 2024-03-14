@@ -17,6 +17,9 @@ impl Project {
         let scenes = low_level_project.scenes.iter().map(|low_level_scene| Scene::from_low_level(&low_level_scene, &low_level_project)).collect();
         Self {scenes}
     }
+    pub fn blocks_iter_mut(self: &mut Self) -> impl Iterator<Item = &mut Block> {
+        self.scenes.iter_mut().flat_map(|scene| scene.blocks_iter_mut())
+    }
 }
 
 #[derive(Debug)]
@@ -35,6 +38,9 @@ impl Scene {
             }
         }).collect();
         Self { name: name.clone(), objects }
+    }
+    pub fn blocks_iter_mut(self: &mut Self) -> impl Iterator<Item = &mut Block> {
+        self.objects.iter_mut().flat_map(|object| object.blocks_iter_mut() )
     }
 }
 
@@ -63,6 +69,11 @@ impl Object {
         }).collect();
         Self {before_game_starts_blocks, rules}
     }
+    pub fn blocks_iter_mut(self: &mut Self) -> impl Iterator<Item = &mut Block> {
+        self.before_game_starts_blocks.iter_mut().chain(
+            self.rules.iter_mut().flat_map(|rule| rule.blocks_iter_mut() )
+        )
+    }
 }
 
 #[derive(Debug)]
@@ -82,11 +93,14 @@ impl Rule {
         };
         Self {event: Some(event), blocks}
     }
+    pub fn blocks_iter_mut(self: &mut Self) -> impl Iterator<Item = &mut Block> {
+        self.event.iter_mut().chain(self.blocks.iter_mut())
+    }
 }
 
 #[derive(Debug)]
 pub struct Block {
-    hs_type: BlockType
+    pub hs_type: BlockType
 }
 
 impl Block {
@@ -100,6 +114,6 @@ impl Block {
 }
 
 #[derive(Debug)]
-enum BlockType {
+pub enum BlockType {
     ArbitraryID(String)
 }
