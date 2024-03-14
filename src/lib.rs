@@ -75,13 +75,12 @@ impl Rule {
         Self {event: None, blocks: vec!()}
     }
     fn from_low_level(low_level_rule: &LowLevelRule, low_level_project: &LowLevelProject) -> Self {
-        //TODO: Create a block here for event (they aren't in the json here in the same format as everywehr else)
-        let event: Option<Block> = None;
+        let event = Block {hs_type: BlockType::ArbitraryID(low_level_rule.rule_block_type.to_string())};
         let blocks = match low_level_project.ability_with_id(&low_level_rule.ability_id) {
             None => vec!(),
             Some(low_level_ability) => Block::vec_from_low_level_ability(low_level_ability, low_level_project)
         };
-        Self {event, blocks}
+        Self {event: Some(event), blocks}
     }
 }
 
