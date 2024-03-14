@@ -13,7 +13,7 @@ pub struct Project {
 }
 
 impl Project {
-    pub fn from_low_level(low_level_project: LowLevelProject) -> Self {
+    fn from_low_level(low_level_project: LowLevelProject) -> Self {
         let scenes = low_level_project.scenes.iter().map(|low_level_scene| Scene::from_low_level(&low_level_scene, &low_level_project)).collect();
         Self {scenes}
     }
@@ -26,7 +26,7 @@ pub struct Scene {
 }
 
 impl Scene {
-    pub fn from_low_level(low_level_scene: &LowLevelScene, low_level_project: &LowLevelProject) -> Self {
+    fn from_low_level(low_level_scene: &LowLevelScene, low_level_project: &LowLevelProject) -> Self {
         let name = &low_level_scene.name;
         let objects = low_level_scene.objects.iter().map(|object_id| {
             match low_level_project.object_with_id(&object_id) {
@@ -50,7 +50,7 @@ impl Object {
     pub fn new() -> Self {
         Self { before_game_starts_blocks: vec!(), rules: vec!() }
     }
-    pub fn from_low_level(low_level_object: &LowLevelObject, low_level_project: &LowLevelProject) -> Self {
+    fn from_low_level(low_level_object: &LowLevelObject, low_level_project: &LowLevelProject) -> Self {
         let before_game_starts_blocks = match low_level_project.ability_with_id(&low_level_object.ability_id) {
             None => vec!(),
             Some(ability) => Block::vec_from_low_level_ability(ability, low_level_project)
@@ -74,7 +74,7 @@ impl Rule {
     pub fn new() -> Self {
         Self {event: None, blocks: vec!()}
     }
-    pub fn from_low_level(low_level_rule: &LowLevelRule, low_level_project: &LowLevelProject) -> Self {
+    fn from_low_level(low_level_rule: &LowLevelRule, low_level_project: &LowLevelProject) -> Self {
         //TODO: Create a block here for event (they aren't in the json here in the same format as everywehr else)
         let event: Option<Block> = None;
         let blocks = match low_level_project.ability_with_id(&low_level_rule.ability_id) {
@@ -91,10 +91,10 @@ pub struct Block {
 }
 
 impl Block {
-    pub fn vec_from_low_level_ability(low_level_ability: &LowLevelAbility, low_level_project: &LowLevelProject) -> Vec<Self> {
+    fn vec_from_low_level_ability(low_level_ability: &LowLevelAbility, low_level_project: &LowLevelProject) -> Vec<Self> {
         low_level_ability.blocks.iter().map(|low_level_block| Block::from_low_level(low_level_block, low_level_project)).collect()
     }
-    pub fn from_low_level(low_level_block: &LowLevelBlock, low_level_project: &LowLevelProject) -> Self {
+    fn from_low_level(low_level_block: &LowLevelBlock, low_level_project: &LowLevelProject) -> Self {
         let hs_type = BlockType::ArbitraryID(low_level_block.hs_type.to_string());
         Self {hs_type}
     }
