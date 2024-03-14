@@ -12,11 +12,13 @@ fn main() {
 		// Currently only ArbitraryID exists, in the future add KnownBlock(HSBlockType) or something
 		match &block.hs_type {
 			hsapi::BlockType::ArbitraryID(id) => {
-				if id == "69" {
-					block.hs_type = hsapi::BlockType::ArbitraryID("22".to_string());
+				// `*id`? Is this the correct way to do this?
+				if *id == 69.0 {
+					block.hs_type = hsapi::BlockType::ArbitraryID(22.0);
 				}
 			}
 		}
 	});
-	println!("{:?}", project)
+	let new_json = project.jsonify().expect("jsonify");
+	println!("{}", new_json)
 }
